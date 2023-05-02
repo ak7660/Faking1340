@@ -1,11 +1,14 @@
 CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra -Werror -pedantic
 
-tictactoe: tictactoe.o
-	$(CXX) $(CXXFLAGS) -o tictactoe tictactoe.o
+tictactoe: main.o tictactoe.o
+	$(CXX) $(CXXFLAGS) -o tictactoe main.o tictactoe.o
 
-tictactoe.o: tictactoe.cpp
+main.o: main.cpp tictactoe.h
+	$(CXX) $(CXXFLAGS) -c main.cpp
+
+tictactoe.o: tictactoe.cpp tictactoe.h
 	$(CXX) $(CXXFLAGS) -c tictactoe.cpp
 
 clean:
-	rm -f tictactoe tictactoe.o
+	rm -f *.o tictactoe
