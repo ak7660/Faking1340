@@ -39,18 +39,6 @@ void printLogo() {
 }
 
 
-int main() {
-    story();
-    int difficulty = initiate();
-    if (difficulty == 0) {
-        return 0;
-    }
-
-    // Add game logic here
-
-    return 0;
-}
-
 void player_ranking() {
     // Implement player ranking logic here
 }
@@ -146,4 +134,101 @@ void story() {
         getline(cin, x);
     }
 }
+}
+
+int main() {
+    bool breaker = false;
+    bool breaker2 = false;
+    srand(time(NULL));
+
+    while (true) {
+        while (true) {
+            int difficulty = initiate();
+            std::string player_name;
+            if (difficulty != -1) {
+                player_name = name();
+            }
+            if (difficulty == -1 || player_name.empty()) {
+                std::cout << "->BYE BYE~" << std::endl;
+                breaker = true;
+                break;
+            }
+            generate(difficulty);
+            distribute_items(difficulty);
+            int quit = false;
+            int step = 0;
+            int weight = 0;
+            if (difficulty == 1) {
+                weight = 3;
+            } else if (difficulty == 2) {
+                weight = 2;
+            } else if (difficulty == 3) {
+                weight = 1;
+            }
+            show();
+
+            while (true) {
+                quit = false;
+                int event = -1;
+                std::pair<int, int> pos = get_position();
+                int row = pos.first, column = pos.second;
+                std::vector<char> moves_vec = possible_moves();
+                std::string moves(moves_vec.begin(), moves_vec.end());
+                char move;
+                std::cout << "Enter a move (" << moves << ") OR (Q) back to Menu: ";
+                std::cin >> move;
+
+                if (std::cin && (moves.find(move) != std::string::npos || move == 'Q')) {
+                    event = move_O(move);
+                    step++;
+                } else {
+                    std::cout << "->Invalid input" << std::endl;
+                }
+                if (quit) {
+                    step--;
+                    char sure;
+                    std::cout << "->Press (Q) again to quit OR else return.(Your result will not be saved before you reach the exit!): ";
+                    std::cin >> sure;
+                    if (sure == 'Q') {
+                        std::cout << std::endl << player_name << " left the game!" << std::endl;
+                        breaker2 = true;
+                        break;
+                    }
+                }
+                if (event == -1) {
+                    continue;
+                } else if (event == 0) {
+                    show();
+                    std::cout << "Congratulations " << player_name << "! It took you " << step << " steps to reach the Exit!" << std::endl;
+                    std::cout << std::endl << "Your corresponding RADIATION LEVEL = " << step << " X " << weight << " = " << step*weight << std::endl;
+                    std::cout << std::endl << "This will be automatically updated on the ranking system if you are a new player OR your RADIATION LEVEL is lower than previous." << std::endl;
+                    insert_player(player_name, step, difficulty);
+                    std::cout << std::endl;
+                    std::cin.ignore();
+                    std::cout << "Press ENTER to continue: ";
+                    std::cin.get();
+                    break;
+                } else if (event == 1) {
+                    game();
+                } else if (event == 2) {
+                    std::pair<int, int> pos = get_position();
+                    row = pos.first, column = pos.second;
+                    teleport(row, column);
+                }
+                show();
+                show_player_information();
+            }
+            if (breaker2) {
+                break;
+            }
+            if (breaker) {
+                break;
+            }
+        }
+        if (breaker) {
+            break;
+        }
+    }
+
+    return 0;
 }
