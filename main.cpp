@@ -9,6 +9,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <unistd.h>
+#include <random>
 using namespace std;
 
 // Encryption and decryption functions are omitted in this example
@@ -22,6 +23,9 @@ int initiate();
 
 // Story function
 void story();
+
+// Global variable to store the generated maze
+std::vector<std::vector<char>> maze;
 
 void printLogo() {
     std::vector<std::string> logo = {
@@ -134,6 +138,146 @@ void story() {
         getline(cin, x);
     }
 }
+}
+
+// Randomly distributed the items on the maze
+void generate(int difficulty) {
+    const std::vector<std::string>* maze_temp;
+
+    if (difficulty == 1) {
+        maze_temp = &maze1;
+    } else if (difficulty == 2) {
+        maze_temp = &maze2;
+    } else if (difficulty == 3) {
+        maze_temp = &maze3;
+    } else {
+        std::cerr << "Invalid difficulty value" << std::endl;
+        return;
+    }
+
+    maze.clear();
+    for (const std::string& line : *maze_temp) {
+        std::vector<char> temp(line.begin(), line.end());
+        maze.push_back(temp);
+    }
+
+void distribute_items(int difficulty) {
+    int num_stars, num_tp;
+    
+    if (difficulty == 1) {
+        num_stars = 8;
+        num_tp = 5;
+    } else if (difficulty == 2) {
+        num_stars = 15;
+        num_tp = 10;
+    } else if (difficulty == 3) {
+        num_stars = 25;
+        num_tp = 20;
+    }
+
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_int_distribution<int> row_dist(0, maze.size() - 1);
+    std::uniform_int_distribution<int> col_dist(0, maze[0].size() - 1);
+
+    int num = 0;
+    while (num != num_stars) {
+        int row = row_dist(mt);
+        int column = col_dist(mt);
+        if (maze[row][column] == ' ') {
+            maze[row][column] = '*';
+            num++;
+        }
+    }
+
+    num = 0;
+    while (num != num_tp) {
+        int row = row_dist(mt);
+        int column = col_dist(mt);
+        if (maze[row][column] == ' ') {
+            maze[row][column] = '?';
+            num++;
+        }
+    }
+}
+
+void show() {
+    std::string display = "";
+    for (const auto& row : maze) {
+        for (const auto& cell : row) {
+            display += cell;
+        }
+        display += " \n";
+    }
+    std::cout << display;
+}
+    
+std::pair<int, int> get_position() {
+    for (int i = 0; i < maze.size(); ++i) {
+        for (int j = 0; j < maze[i].size(); ++j) {
+            if (maze[i][j] == 'O') {
+                return {i, j};
+            }
+        }
+    }
+    return {-1, -1}; // Return an invalid position if not found
+}
+
+std::vector<char> possible_moves(int row, int column) {
+    std::vector<char> moves;
+    std::vector<char> possibles = {' ', '?', '*', 'E'};
+    
+    if (std::find(possibles.begin(), possibles.end(), maze[row - 1][column]) != possibles.end()) {
+        moves.push_back('W');
+    }
+    if (std::find(possibles.begin(), possibles.end(), maze[row + 1][column]) != possibles.end()) {
+        moves.push_back('S');
+    }
+    if (std::find(possibles.begin(), possibles.end(), maze[row][column - 1]) != possibles.end()) {
+        moves.push_back('A');
+    }
+    if (std::find(possibles.begin(), possibles.end(), maze[row][column + 1]) != possibles.end()) {
+        moves.push_back('D');
+    }
+
+    return moves;
+}
+
+int move_O(char direction, int row, int column, bool& quit) {
+    std::system("CLS"); // Clear console on Windows; use "clear" for Unix-based systems
+
+    char item = ' ';
+    if (direction == 'Q') {
+        quit = true;
+        return -1;
+    }
+    maze[row][column] = ' ';
+
+    if (direction == 'W') {
+        item = maze[row - 1][column];
+        maze[row - 1][column] = 'O';
+    } else if (direction == 'S') {
+        item = maze[row + 1][column];
+        maze[row + 1][column] = 'O';
+    } else if (direction == 'A') {
+        item = maze[row][column - 1];
+        maze[row][column - 1] = 'O';
+    } else if (direction == 'D') {
+        item = maze[row][column + 1];
+        maze[row][column + 1] = 'O';
+    }
+
+    if (item == ' ') {
+        return -1; // None
+    } else if (item == 'E') {
+        return 0; // Win
+    } else if (item == '*') {
+        return 1; // Game
+    } else if (item == '?') {
+        return 2; // Transport
+    }
+
+    return -1;
 }
 
 int main() {
