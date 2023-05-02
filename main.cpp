@@ -6,6 +6,10 @@
 #include <fstream>
 #include <cctype>
 #include "mazes.h"
+#include <ctime>
+#include <cstdlib>
+#include <unistd.h>
+using namespace std;
 
 // Encryption and decryption functions are omitted in this example
 // as they require a separate implementation using C++ cryptography libraries.
@@ -18,6 +22,22 @@ int initiate();
 
 // Story function
 void story();
+
+void printLogo() {
+    std::vector<std::string> logo = {
+        "  ________ __                    __    ___________                   ",
+        " /  _____/|  |__   ____  _______/  |_  \\__    ___/_____  _  ______   ",
+        "/   \\  ___|  |  \\ /  _ \\/  ___/\\   __\\   |    | /  _ \\ \\/ \\/ /    \\  ",
+        "\\    \\_\\  \\   Y  (  <_> )___ \\ |  |      |    |(  <_> )     /   |  \\ ",
+        "\\______  /___|  /\\____/____  > |__|      |____| \\____/ \\/\\_/|___|  / ",
+        "       \\/     \\/           \\/                                    \\/  "
+    };
+
+    for (const auto& line : logo) {
+      std::cout << line << std::endl;
+    }
+}
+
 
 int main() {
     story();
@@ -38,26 +58,31 @@ void player_ranking() {
 int initiate() {
     bool invalid = false;
     while (true) {
-        std::cout << "\033[H\033[J";
+        system("clear"); // On Linux and macOS, use "clear" instead of "cls"
         if (invalid) {
-            std::cout << "->Invalid input, try again! ";
+            std::cout << "->Invalid input, try again!" << std::endl;
         }
-        // Add logo and other prints here
+        std::cout << "=====================================================================" << std::endl;
+        printLogo();
+        playerRanking();
+        std::cout << "=====================================================================" << std::endl;
+        std::cout << std::endl;
+        std::cout << "-->Enter (Q) to exit<--" << std::endl;
+        std::cout << std::endl;
 
-        player_ranking();
-        std::cout << "=====================================================================\n";
-        std::cout << "\n-->Enter (Q) to exit<--\n\n";
-        while (true) {
-            std::string user_input;
-            std::cin >> user_input;
-            if (!user_input.empty() && std::isdigit(user_input[0]) && 0 < std::stoi(user_input) && std::stoi(user_input) < 4) {
+        std::string user_input;
+        std::getline(std::cin, user_input);
+
+        if (user_input.length() == 1) {
+            if (isdigit(user_input[0]) && std::stoi(user_input) > 0 && std::stoi(user_input) < 4) {
                 return std::stoi(user_input);
-            } else if (user_input == "Q") {
-                return 0;
+            } else if (user_input == "Q" || user_input == "q") {
+                return -1;
             } else {
                 invalid = true;
-                break;
             }
+        } else {
+            invalid = true;
         }
     }
 }
