@@ -7,14 +7,7 @@ const int BOARD_SIZE = 5;
 const int MAX_HP = 100;
 
 void print_welcome_message() {
-    std::cout << "*****************" << std::endl;
-    std::cout << " W      W  EEEEE  L       CCC   OO   MM    MM EEEEE" << std::endl;
-    std::cout << " W   W  W  E      L      CC   OO  OO M M  M M E    " << std::endl;
-    std::cout << " W  WW  W  EEEEE  L     C     O    O M  MM  M EEEEE" << std::endl;
-    std::cout << " W W  W W  E      L      CC   OO  OO M   M  M E    " << std::endl;
-    std::cout << " WW    WW  EEEEE  LLLLL   CCC   OO   M      M EEEEE" << std::endl;
-    std::cout << "*****************" << std::endl;
-    std::cout << std::endl;
+    std::cout << "Welcome to the Game!" << std::endl << std::endl;
 }
 
 void print_instructions() {
@@ -34,16 +27,16 @@ public:
     }
 
     void reset_board() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 board[i][j] = '-';
             }
         }
     }
 
     void print_board() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 std::cout << board[i][j] << ' ';
             }
             std::cout << std::endl;
@@ -60,7 +53,7 @@ public:
     }
 
     bool is_valid_move(int row, int col) {
-        if (row < 0 || row >= 3 || col < 0 || col >= 3) {
+        if (row < 0 || row >= BOARD_SIZE || col < 0 || col >= BOARD_SIZE) {
             return false;
         }
         if (board[row][col] != '-') {
@@ -100,8 +93,8 @@ public:
     }
 
     void find_player(char player, int &row, int &col) {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            for (int j = 0; j < BOARD_SIZE; j++) {
                 if (board[i][j] == player) {
                     row = i;
                     col = j;
@@ -135,10 +128,14 @@ public:
         return hp1 <= 0 || hp2 <= 0;
     }
 
-    void print_hp() {
-        std::cout << "Player 1 HP: " << hp1 << std::endl;
-        std::cout << "Player 2 HP: " << hp2 << std::endl;
-        std::cout << std::endl;
+    void print_winner() {
+        if (hp1 > hp2) {
+            std::cout << "Player 1 wins with " << hp1 << " HP!" << std::endl;
+        } else if (hp2 > hp1) {
+            std::cout << "Player 2 wins with " << hp2 << " HP!" << std::endl;
+        } else {
+            std::cout << "It's a draw!" << std::endl;
+        }
     }
 
 private:
@@ -152,40 +149,29 @@ int main() {
     print_instructions();
 
     Game game;
-    game.place_player('1', 0, 0);
-    game.place_player('2', BOARD_SIZE - 1, BOARD_SIZE - 1);
+    game.place_player('1', 1, 1);
+    game.place_player('2', 3, 3);
 
-    // Place G and W elements on the board
-    game.place_player('G', 2, 2);
-    game.place_player('W', 2, 4);
+    int first_player = (rand() % 2) + 1;
+    std::cout << "Player " << first_player << " goes first." << std::endl << std::endl;
+    char current_player = '0' + first_player;
 
-    game.print_board();
-
-    std::string move;
     while (!game.is_game_over()) {
-        // Player 1 move
-        std::cout << "Player 1 (U, D, L, R): ";
-        std::cin >> move;
-        if (move.length() > 1) {
-            char direction = move[0];
-            int steps = std::stoi(move.substr(1));
-            game.player_move('1', direction, steps);
+        game.print_board();
+        std::cout << "Player " << current_player << " move (U/D/L/R steps): ";
+        char direction;
+        int steps;
+        std::cin >> direction >> steps;
+        game.player_move(current_player, direction, steps);
+
+        if (current_player == '1') {
+            current_player = '2';
+        } else {
+            current_player = '1';
         }
-
-        game.print_board();
-        game.print_hp();
-
-
-        // Computer move
-        char directions[] = {'U', 'D', 'L', 'R'};
-        int random_direction_index = rand() % 4;
-        char computer_direction = directions[random_direction_index];
-        int computer_steps = rand() % 3 + 1;
-        game.player_move('2', computer_direction, computer_steps);
-
-        game.print_board();
-        game.print_hp();
     }
+
+    game.print_winner();
 
     return 0;
 }
