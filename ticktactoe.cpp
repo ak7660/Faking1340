@@ -3,7 +3,9 @@
 #include <cstdlib>
 #include "tictactoe.h"
 
-void printBoard(const std::vector<std::vector<char>>& board) {
+#define SIZE 3
+
+void printBoard(const std::vector<std::vector<char> >& board) {
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             std::cout << board[i][j] << (j < SIZE - 1 ? '|' : '\n');
@@ -14,7 +16,7 @@ void printBoard(const std::vector<std::vector<char>>& board) {
     }
 }
 
-bool makeHumanMove(std::vector<std::vector<char>>& board) {
+bool makeHumanMove(std::vector<std::vector<char> >& board) {
     int row, col;
     while (true) {
         std::cout << "Enter your move (row and column, 1-3): ";
@@ -29,7 +31,7 @@ bool makeHumanMove(std::vector<std::vector<char>>& board) {
     return checkWin(board, 'X') || isDraw(board);
 }
 
-bool makeComputerMove(std::vector<std::vector<char>>& board) {
+bool makeComputerMove(std::vector<std::vector<char> >& board) {
     int row, col;
     while (true) {
         row = std::rand() % SIZE;
@@ -42,7 +44,7 @@ bool makeComputerMove(std::vector<std::vector<char>>& board) {
     return checkWin(board, 'O') || isDraw(board);
 }
 
-bool checkWin(const std::vector<std::vector<char>>& board, char player) {
+bool checkWin(const std::vector<std::vector<char> >& board, char player) {
     for (int i = 0; i < SIZE; ++i) {
         if (board[i][0] == player && board[i][1] == player && board[i][2] == player) {
             return true;
@@ -60,7 +62,7 @@ bool checkWin(const std::vector<std::vector<char>>& board, char player) {
     return false;
 }
 
-bool isDraw(const std::vector<std::vector<char>>& board) {
+bool isDraw(const std::vector<std::vector<char> >& board) {
     for (int i = 0; i < SIZE; ++i) {
         for (int j = 0; j < SIZE; ++j) {
             if (board[i][j] == ' ') {
