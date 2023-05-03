@@ -17,12 +17,12 @@ void playNumberGuessingGame() {
     std::srand(std::time(0));
 
     // Generate a random number between 1 and 100
-    int randomNumber = std::rand() % 100 + 1;
+    int randomNumber = std::rand() % 50 + 1;
     int userGuess;
     int attempts = 0;
 
     std::cout << "Welcome to the Number Guessing Game!" << std::endl;
-    std::cout << "I have picked a number between 1 and 100." << std::endl;
+    std::cout << "I have picked a number between 1 and 50." << std::endl;
     std::cout << "Can you guess the number?" << std::endl;
 
     // Main game loop
