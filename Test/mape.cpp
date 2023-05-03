@@ -278,7 +278,8 @@ bool MiniGame::game8() {
         std::cout << "Congrats! You are right. The piano belongs to the string family. Continue the game...\n";
         return true;
     } else {
-        std::cout << "Just a pity, you are incorrect. The piano belongs to the string family. Better luck next time!\n        return false;
+        std::cout << "Just a pity, you are incorrect. The piano belongs to the string family. Better luck next time!\n";
+        return false;
     }
 }
 
