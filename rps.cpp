@@ -1,61 +1,62 @@
-// RPS.cpp
-#include "rps.h"
 #include <iostream>
-#include <random>
-#include <array>
+#include <cstdlib>
+#include <ctime>
+#include <string>
 
-std::string getPlayerInput()
-{
-    std::string player;
-    std::cout << "your choice (R/P/S): ";
-    std::cin >> player;
-    while (player != "R" && player != "P" && player != "S")
-    {
-        std::cout << "invalid input" << std::endl;
-        std::cout << "your choice (R/P/S): ";
-        std::cin >> player;
-    }
-    return player;
-}
+int main() {
+    std::string choices[] = {"rock", "paper", "scissors"};
+    int num_choices = 3;
+    int user_wins = 0;
+    int computer_wins = 0;
 
-std::string getRandomChoice()
-{
-    std::array<std::string, 3> choices = {"R", "P", "S"};
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(0, 2);
-    return choices[dist(gen)];
-}
+    // Seed the random number generator
+    std::srand(std::time(nullptr));
 
-bool RPS()
-{
-    int win = 0, loss = 0;
-    std::string computer, player;
+    // Play rounds until either the user or the computer has won three times
+    while (user_wins < 3 && computer_wins < 3) {
+        std::cout << "Enter your choice (rock, paper, or scissors): ";
+        std::string user_choice;
+        std::cin >> user_choice;
 
-    while (win != 2 && loss != 2)
-    {
-        computer = getRandomChoice();
-        player = getPlayerInput();
+        // Generate a random choice for the computer
+        int computer_choice_index = std::rand() % num_choices;
+        std::string computer_choice = choices[computer_choice_index];
 
-        std::cout << "enemy choice: " << computer << std::endl;
+        std::cout << "Computer chose " << computer_choice << "\n";
 
-        if (player == computer)
-        {
-            std::cout << "draw\nwin: " << win << "\nloss: " << loss << std::endl;
+        // Determine the winner of the round
+        if (user_choice == "rock" && computer_choice == "scissors") {
+            std::cout << "You win!\n";
+            ++user_wins;
         }
-
-        if ((player == "S" && computer == "P") || (player == "P" && computer == "R") || (player == "R" && computer == "S"))
-        {
-            win++;
-            std::cout << "you win\nwin: " << win << "\nloss: " << loss << std::endl;
+        else if (user_choice == "paper" && computer_choice == "rock") {
+            std::cout << "You win!\n";
+            ++user_wins;
         }
-
-        if ((player == "S" && computer == "R") || (player == "P" && computer == "S") || (player == "R" && computer == "P"))
-        {
-            loss++;
-            std::cout << "you loss\nwin: " << win << "\nloss: " << loss << std::endl;
+        else if (user_choice == "scissors" && computer_choice == "paper") {
+            std::cout << "You win!\n";
+            ++user_wins;
+        }
+        else if (user_choice == computer_choice) {
+            std::cout << "It's a tie!\n";
+        }
+        else {
+            std::cout << "Computer wins!\n";
+            ++computer_wins;
         }
     }
 
-    return win == 2;
+    // Print the final results
+    std::cout << "\nFinal scores:\n";
+    std::cout << "You: " << user_wins << "\n";
+    std::cout << "Computer: " << computer_wins << "\n";
+
+    if (user_wins > computer_wins) {
+        std::cout << "You win!\n";
+    }
+    else {
+        std::cout << "Computer wins!\n";
+    }
+
+    return 0;
 }
