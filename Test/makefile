@@ -26,4 +26,3 @@ map: map.cpp
 generate: map
 	./map > maze.txt 2> pospos.txt
 
-
