@@ -5,6 +5,7 @@
 #include "maze.h"
 #include "minigame.h"
 
+// Clear the screen
 void clear_screen() {
 #ifdef _WIN32
     std::system("CLS");
@@ -13,6 +14,7 @@ void clear_screen() {
 #endif
 }
 
+// Print the menu
 void print_menu(int high_score) {
     std::cout << R"(                                                                                                         
     -`^'-         \-^-/          )))           ___           (((          -`^'-          |||      
@@ -39,6 +41,7 @@ ooO--(_)--Ooo-ooO--(_)--Ooo-ooO--(_)--Ooo-ooO--(_)--Ooo-ooO--(_)--Ooo-ooO--(_)--
     std::cout << "Choose an option by entering the corresponding number: ";
 }
 
+// Read the highest score form the high_score.txt file gnerated
 int read_high_score(const std::string& filename) {
     std::ifstream file(filename);
     int high_score = std::numeric_limits<int>::max();
@@ -51,6 +54,7 @@ int read_high_score(const std::string& filename) {
     return high_score;
 }
 
+// Write the high score into the file high_score.txt
 void write_high_score(const std::string& filename, int high_score) {
     std::ofstream file(filename);
 
@@ -60,18 +64,21 @@ void write_high_score(const std::string& filename, int high_score) {
     }
 }
 
-
+// Main program
 int main() {
+    // Load the randomly generated map in maze.txt
     std::string maze_file = "maze.txt";
     std::string high_score_file = "high_score.txt";
     std::ifstream input(maze_file);
     int high_score = read_high_score(high_score_file);
 
+    // Check if it can be opened
     if (!input.is_open()) {
         std::cerr << "Error: couldn't open the maze file." << std::endl;
         return 1;
     }
 
+    // Show the menu and the Rock
     while (true) {
         clear_screen();
         Maze maze(input);
@@ -146,7 +153,9 @@ int main() {
         int steps_taken = 0;
         char command;
 
+        // Maze game loop
         while (true) {
+            // Print the maze each time after a move
             clear_screen();
             maze.print();
             std::cout << "Steps taken -----------> " << steps_taken << std::endl;
@@ -155,6 +164,7 @@ int main() {
 
             if (command == 'q') {
                 std::cout << "Returning to the main menu..." << std::endl;
+                // After quitting the game, 
                 // Close the input stream
                 input.close();
 
@@ -170,7 +180,7 @@ int main() {
                      }
                 break;
             }
-
+            // Cases for player movement
             int move_result = maze.move_player(command);
             bool won_minigame = false;
 
