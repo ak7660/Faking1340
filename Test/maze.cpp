@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include "maze.h"
 
+// Constructor for the Maze class, initializes the maze from the input stream
 Maze::Maze(std::istream& input) {
     std::srand(std::time(0));
 
@@ -21,12 +22,14 @@ Maze::Maze(std::istream& input) {
     }
 }
 
+// Prints the maze to the console
 void Maze::print() const {
     for (const auto& line : map) {
         std::cout << line << std::endl;
     }
 }
 
+// Moves the player in the maze based on the given command and the result of the mini-game
 int Maze::move_player(char command, bool won_mini_game) {
     int new_x = player_x;
     int new_y = player_y;
@@ -80,6 +83,7 @@ int Maze::move_player(char command, bool won_mini_game) {
     return 0; // Invalid move
 }
 
+// Teleports the player back to the starting position at the top-left corner
 void Maze::teleport_to_start() {
     // Clear the current player position
     map[player_y][player_x] = ' ';
@@ -92,6 +96,7 @@ void Maze::teleport_to_start() {
     map[player_y][player_x] = 'O';
 }
 
+// Checks if the player has reached the exit and won the game
 bool Maze::check_win() const {
     return (player_y == 0 && player_x == map[0].size() - 2);
 }
